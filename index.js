@@ -8,17 +8,34 @@ const personalMovieDB = {
     privat: false,
 }
 
-for (let i = 0; i < 2; i++) {
-    const lastWatchedMovie = prompt('Один из последних просмотренных фильмов?', ''),
-        movieRating = prompt('На сколько оцените его?', '');
+function askMoviesSecondWay() {
+    let i = 0;
 
-    if (lastWatchedMovie != null && movieRating != null && lastWatchedMovie != '' && movieRating != '' && lastWatchedMovie.length < 50) {
+    while (i < 2) {
+        let lastWatchedMovie,
+            movieRating;
+
+        do {
+            lastWatchedMovie = prompt('Один из последних просмотренных фильмов?', '');
+        } while (lastWatchedMovie == '' || lastWatchedMovie == null || lastWatchedMovie.length > 50);
+
+        do {
+            movieRating = prompt('На сколько оцените его?', '');
+        } while (movieRating == '' || movieRating == null);
+
         personalMovieDB.movies[lastWatchedMovie] = movieRating;
-    } else {
-        alert('Ошибка. Пожалуйста, введите корректные данные.');
-        i--;
+        i++;
     }
 }
 
-console.log(personalMovieDB);
+if (personalMovieDB.count < 10) {
+    console.log('Просмотрено довольно мало фильмов');
+} else if (personalMovieDB.count >= 10 && personalMovieDB.count <= 30) {
+    console.log('Вы классический зритель');
+} else if (personalMovieDB.count > 30) {
+    console.log('Вы киноман');
+} else {
+    console.log('Произошла ошибка');
+}
 
+console.log(personalMovieDB);
