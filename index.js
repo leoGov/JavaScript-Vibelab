@@ -8,18 +8,7 @@ const personalMovieDB = {
         this.count = +prompt('Сколько фильмов вы уже посмотрели?', '');
 
         for (let i = 0; i < 2; i++) {
-            let lastWatchedMovie,
-                movieRating;
-
-            do {
-                lastWatchedMovie = prompt('Один из последних просмотренных фильмов?', '');
-            } while (lastWatchedMovie === '' || lastWatchedMovie === null || lastWatchedMovie.length > 50);
-
-            do {
-                movieRating = prompt('На сколько оцените его?', '');
-            } while (movieRating === '' || movieRating === null);
-
-            this.movies[lastWatchedMovie] = movieRating;
+            this.addMovie();
         }
 
         this.analyzeMovies();
@@ -54,18 +43,75 @@ const personalMovieDB = {
         this.genres.forEach((genre, index) => {
             console.log(`Любимый жанр #${index + 1} - это ${genre}`);
         });
+    },
+    addMovie: function() {
+        let lastWatchedMovie,
+            movieRating,
+            isFavorite;
+
+        do {
+            lastWatchedMovie = prompt('Один из последних просмотренных фильмов?', '');
+        } while (lastWatchedMovie === '' || lastWatchedMovie === null || lastWatchedMovie.length > 50);
+
+        do {
+            movieRating = prompt('На сколько оцените его?', '');
+        } while (movieRating === '' || movieRating === null);
+
+        isFavorite = confirm('Сделать фильм любимым?');
+
+        if (lastWatchedMovie.length > 21) {
+            lastWatchedMovie = lastWatchedMovie.slice(0, 21) + '...';
+        }
+
+        this.movies[lastWatchedMovie] = {
+            rating: movieRating,
+            favorite: isFavorite
+        };
+
+        console.log(isFavorite ? 'Добавляем любимый фильм' : 'Фильм добавлен');
+    },
+    deleteMovie: function(movieName) {
+        if (this.movies.hasOwnProperty(movieName)) {
+            delete this.movies[movieName];
+            console.log(`Фильм "${movieName}" удален из списка`);
+        } else {
+            console.log(`Фильма "${movieName}" нет в списке`);
+        }
+    },
+    sortMovies: function() {
+        this.movies = Object.fromEntries(
+            Object.entries(this.movies).sort((a, b) => a[0].localeCompare(b[0]))
+        );
     }
 };
 
-document.getElementById('startBtn').addEventListener('click', function() {
-    personalMovieDB.start();
-});
+personalMovieDB.start();
+personalMovieDB.showMyDB();
+personalMovieDB.toggleVisibleMyDB();
+personalMovieDB.showMyDB();
+personalMovieDB.writeYourGenres();
 
-document.getElementById('toggleDBBtn').addEventListener('click', function() {
-    personalMovieDB.toggleVisibleMyDB();
+// Добавление нового фильма
+const addMovieBtn = document.getElementById('addMovieBtn');
+
+addMovieBtn.addEventListener('click', function() {
+    personalMovieDB.addMovie();
     personalMovieDB.showMyDB();
 });
 
-document.getElementById('showGenresBtn').addEventListener('click', function() {
-    personalMovieDB.writeYourGenres();
+// Удаление фильма
+const deleteMovieBtn = document.getElementById('deleteMovieBtn');
+
+deleteMovieBtn.addEventListener('click', function() {
+    const movieName = prompt('Введите название фильма для удаления: ');
+    personalMovieDB.deleteMovie(movieName);
+    personalMovieDB.showMyDB();
+});
+
+// Сортировка фильмов
+const sortMoviesBtn = document.getElementById('sortMoviesBtn');
+
+sortMoviesBtn.addEventListener('click', function() {
+    personalMovieDB.sortMovies();
+    personalMovieDB.showMyDB();
 });
