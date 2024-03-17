@@ -1,10 +1,13 @@
-const personalMovieDB = {
-    count: 0,
-    movies: {},
-    actors: {},
-    genres: [],
-    privat: false,
-    start: function() {
+class PersonalMovieDB {
+    constructor() {
+        this.count = 0;
+        this.movies = {};
+        this.actors = {};
+        this.genres = [];
+        this.privat = false;
+    }
+
+    start() {
         this.count = +prompt('Сколько фильмов вы уже посмотрели?', '');
 
         for (let i = 0; i < 2; i++) {
@@ -12,8 +15,9 @@ const personalMovieDB = {
         }
 
         this.analyzeMovies();
-    },
-    analyzeMovies: function() {
+    }
+
+    analyzeMovies() {
         if (this.count < 10) {
             console.log('Просмотрено довольно мало фильмов');
         } else if (this.count >= 10 && this.count <= 30) {
@@ -23,28 +27,31 @@ const personalMovieDB = {
         } else {
             console.log('Произошла ошибка');
         }
-    },
-    showMyDB: function() {
+    }
+
+    showMyDB() {
         if (!this.privat) {
             console.log(this);
         }
-    },
-    toggleVisibleMyDB: function() {
+    }
+
+    toggleVisibleMyDB() {
         this.privat = !this.privat;
-    },
-    writeYourGenres: function() {
-        for (let i = 0; i < 3; i++) {
-            let favoriteGenre;
-            do {
-                favoriteGenre = prompt(`Ваш любимый жанр под номером ${i + 1}`, '');
-            } while (favoriteGenre === '' || favoriteGenre === null);
-            this.genres.push(favoriteGenre);
-        }
-        this.genres.forEach((genre, index) => {
+    }
+
+    writeYourGenres(...genres) {
+        const genreList = document.createElement('ul');
+        genreList.classList.add('genre-list'); // Добавляем класс
+        document.body.appendChild(genreList); // Добавляем список в тело документа
+        genres.forEach((genre, index) => {
             console.log(`Любимый жанр #${index + 1} - это ${genre}`);
+            const listItem = document.createElement('li');
+            listItem.textContent = genre;
+            genreList.appendChild(listItem);
         });
-    },
-    addMovie: function() {
+    }
+
+    addMovie() {
         let lastWatchedMovie,
             movieRating,
             isFavorite;
@@ -69,27 +76,31 @@ const personalMovieDB = {
         };
 
         console.log(isFavorite ? 'Добавляем любимый фильм' : 'Фильм добавлен');
-    },
-    deleteMovie: function(movieName) {
+    }
+
+    deleteMovie(movieName) {
         if (this.movies.hasOwnProperty(movieName)) {
             delete this.movies[movieName];
             console.log(`Фильм "${movieName}" удален из списка`);
         } else {
             console.log(`Фильма "${movieName}" нет в списке`);
         }
-    },
-    sortMovies: function() {
+    }
+
+    sortMovies() {
         this.movies = Object.fromEntries(
             Object.entries(this.movies).sort((a, b) => a[0].localeCompare(b[0]))
         );
     }
-};
+}
+
+const personalMovieDB = new PersonalMovieDB();
 
 personalMovieDB.start();
 personalMovieDB.showMyDB();
 personalMovieDB.toggleVisibleMyDB();
 personalMovieDB.showMyDB();
-personalMovieDB.writeYourGenres();
+personalMovieDB.writeYourGenres('Драма', 'Комедия', 'Фантастика');
 
 // Добавление нового фильма
 const addMovieBtn = document.getElementById('addMovieBtn');
